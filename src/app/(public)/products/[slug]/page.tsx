@@ -1,0 +1,228 @@
+﻿import { notFound } from 'next/navigation';
+import Link from 'next/link';
+import { Download, FileText } from 'lucide-react';
+import { Container } from '@/components/layout/Container';
+import { Badge } from '@/components/ui/Badge';
+import { Breadcrumb } from '@/components/ui/Breadcrumb';
+import { ImagePlaceholder } from '@/components/ui/ImagePlaceholder';
+import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/Card';
+import { ProductQuoteButton } from '@/components/sections/ProductQuoteButton';
+import { ProductInquiryButton } from '@/components/sections/ProductInquiryButton';
+import { products } from '@/data/products';
+
+interface ProductPageProps {
+  params: Promise<{ slug: string }>;
+}
+
+export function generateStaticParams() {
+  return products.map((product) => ({ slug: product.slug }));
+}
+
+export default async function ProductDetailPage({ params }: ProductPageProps) {
+  const { slug } = await params;
+  const product = products.find((p) => p.slug === slug);
+
+  if (!product) {
+    notFound();
+  }
+
+  const relatedProducts = products
+    .filter((p) => p.category === product.category && p.slug !== product.slug)
+    .slice(0, 3);
+
+  return (
+    <>
+      <section className="border-border border-b py-8">
+        <Container>
+          <Breadcrumb
+            items={[
+              { label: 'Products', href: '/products' },
+              { label: product.category, href: `/products?category=${product.category}` },
+              { label: product.name },
+            ]}
+          />
+        </Container>
+      </section>
+
+      <section className="py-[var(--space-section-y)]">
+        <Container className="grid grid-cols-1 gap-10 lg:grid-cols-2">
+          {/* Gallery */}
+          <div>
+            {product.images?.[0] ? (
+              <img
+                src={product.images[0]}
+                alt={product.name}
+                className="h-80 w-full rounded-lg object-cover lg:h-full"
+              />
+            ) : (
+              <ImagePlaceholder className="h-80 w-full rounded-lg lg:h-full" />
+            )}
+          </div>
+
+          {/* Info */}
+          <div>
+            <Badge variant="default" className="mb-3">
+              {product.category}
+            </Badge>
+            <h1 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">
+              {product.name}
+            </h1>
+            <p className="text-text-secondary mt-4 text-base leading-relaxed">
+              {product.description}
+            </p>
+
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <ProductQuoteButton productName={product.name} />
+              <ProductInquiryButton productName={product.name} />
+            </div>
+
+            {/* Lead Time, Warranty, Certifications */}
+            {(product.leadTime || product.warranty || product.certificationCodes) && (
+              <div className="border-border bg-surface mt-8 grid grid-cols-1 gap-4 rounded-lg border p-5 sm:grid-cols-3">
+                {product.leadTime && (
+                  <div>
+                    <p className="text-text-secondary text-xs font-medium tracking-wide uppercase">
+                      Lead Time
+                    </p>
+                    <p className="text-text-primary mt-1 text-sm font-medium">{product.leadTime}</p>
+                  </div>
+                )}
+                {product.warranty && (
+                  <div>
+                    <p className="text-text-secondary text-xs font-medium tracking-wide uppercase">
+                      Warranty
+                    </p>
+                    <p className="text-text-primary mt-1 text-sm font-medium">{product.warranty}</p>
+                  </div>
+                )}
+                {product.certificationCodes && product.certificationCodes.length > 0 && (
+                  <div>
+                    <p className="text-text-secondary text-xs font-medium tracking-wide uppercase">
+                      Certified
+                    </p>
+                    <div className="mt-1 flex flex-wrap gap-1.5">
+                      {product.certificationCodes.map((code) => (
+                        <Badge key={code} variant="success">
+                          {code}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Features */}
+            {product.features && product.features.length > 0 && (
+              <div className="mt-10">
+                <h2 className="font-display text-lg font-semibold">Key Features</h2>
+                <ul className="mt-4 flex flex-col gap-2.5">
+                  {product.features.map((feature) => (
+                    <li
+                      key={feature}
+                      className="text-text-secondary flex items-start gap-2.5 text-sm"
+                    >
+                      <span className="bg-accent mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </Container>
+      </section>
+
+      {/* Specifications */}
+      {product.specifications && product.specifications.length > 0 && (
+        <section className="bg-surface/50 py-[var(--space-section-y)]">
+          <Container>
+            <h2 className="font-display text-2xl font-semibold tracking-tight md:text-3xl">
+              Specifications
+            </h2>
+            <div className="border-border divide-border mt-8 divide-y rounded-lg border">
+              {product.specifications.map((spec) => (
+                <div
+                  key={spec.label}
+                  className="flex flex-col gap-1 px-6 py-4 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <span className="text-text-secondary text-sm font-medium">{spec.label}</span>
+                  <span className="text-text-primary text-sm">{spec.value}</span>
+                </div>
+              ))}
+            </div>
+          </Container>
+        </section>
+      )}
+
+      {/* Downloads */}
+      {product.downloads && product.downloads.length > 0 && (
+        <section className="py-[var(--space-section-y)]">
+          <Container>
+            <h2 className="font-display text-2xl font-semibold tracking-tight md:text-3xl">
+              Downloads
+            </h2>
+            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {product.downloads.map((file) => (
+                <a
+                  key={file.label}
+                  href="#"
+                  className="border-border hover:border-accent flex items-center gap-3 rounded-lg border p-4 transition-colors"
+                >
+                  <div className="bg-accent/10 text-accent flex h-10 w-10 shrink-0 items-center justify-center rounded-md">
+                    <FileText size={20} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-text-primary truncate text-sm font-medium">{file.label}</p>
+                    <p className="text-text-secondary text-xs">
+                      {file.fileType} · {file.fileSize}
+                    </p>
+                  </div>
+                  <Download size={16} className="text-text-secondary shrink-0" />
+                </a>
+              ))}
+            </div>
+          </Container>
+        </section>
+      )}
+
+      {/* Related Products */}
+      {relatedProducts.length > 0 && (
+        <section className="bg-surface/50 py-[var(--space-section-y)]">
+          <Container>
+            <h2 className="font-display text-2xl font-semibold tracking-tight md:text-3xl">
+              Related Products
+            </h2>
+            <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {relatedProducts.map((related) => (
+                <Card key={related.slug} className="overflow-hidden">
+                  {related.images?.[0] ? (
+                    <img
+                      src={related.images[0]}
+                      alt={related.name}
+                      className="h-40 w-full object-cover"
+                    />
+                  ) : (
+                    <ImagePlaceholder className="h-40 w-full" />
+                  )}
+                  <CardHeader>
+                    <CardTitle className="text-base">{related.name}</CardTitle>
+                    <CardDescription>{related.description}</CardDescription>
+                  </CardHeader>
+                  <CardFooter>
+                    <Link
+                      href={`/products/${related.slug}`}
+                      className="text-accent text-sm font-medium hover:underline"
+                    >
+                      View details →
+                    </Link>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          </Container>
+        </section>
+      )}
+    </>
+  );
+}

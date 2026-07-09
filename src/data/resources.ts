@@ -1,0 +1,96 @@
+import type { Resource } from '@/types/resource';
+
+// Placeholder data — replace with real files once available.
+export const resources: Resource[] = [
+  {
+    slug: 'full-product-catalogue-2026',
+    name: 'Full Product Catalogue 2026',
+    category: 'Catalogues',
+    fileType: 'PDF',
+    fileSize: '8.4 MB',
+  },
+  {
+    slug: 'valves-catalogue',
+    name: 'Valves Catalogue',
+    category: 'Catalogues',
+    fileType: 'PDF',
+    fileSize: '3.1 MB',
+  },
+  {
+    slug: 'company-brochure',
+    name: 'Company Overview Brochure',
+    category: 'Brochures',
+    fileType: 'PDF',
+    fileSize: '2.2 MB',
+  },
+  {
+    slug: 'instrumentation-brochure',
+    name: 'Instrumentation Solutions Brochure',
+    category: 'Brochures',
+    fileType: 'PDF',
+    fileSize: '1.8 MB',
+  },
+  {
+    slug: 'ball-valve-manual',
+    name: 'Ball Valve User Manual',
+    category: 'User Manuals',
+    fileType: 'PDF',
+    fileSize: '1.2 MB',
+  },
+  {
+    slug: 'pressure-gauge-manual',
+    name: 'Pressure Gauge User Manual',
+    category: 'User Manuals',
+    fileType: 'PDF',
+    fileSize: '950 KB',
+  },
+  {
+    slug: 'valve-installation-guide',
+    name: 'Valve Installation Guide',
+    category: 'Installation Guides',
+    fileType: 'PDF',
+    fileSize: '1.4 MB',
+  },
+  {
+    slug: 'regulator-installation-guide',
+    name: 'Regulator Installation Guide',
+    category: 'Installation Guides',
+    fileType: 'PDF',
+    fileSize: '1.1 MB',
+  },
+  {
+    slug: 'full-technical-datasheet-index',
+    name: 'Technical Datasheet Index',
+    category: 'Technical Datasheets',
+    fileType: 'PDF',
+    fileSize: '5.6 MB',
+  },
+  {
+    slug: 'sample-calibration-certificate',
+    name: 'Sample Calibration Certificate',
+    category: 'Calibration Certificates',
+    fileType: 'PDF',
+    fileSize: '400 KB',
+  },
+  {
+    slug: 'iso-9001-certificate',
+    name: 'ISO 9001 Certificate',
+    category: 'ISO Certificates',
+    fileType: 'PDF',
+    fileSize: '600 KB',
+  },
+  {
+    slug: 'iso-14001-certificate',
+    name: 'ISO 14001 Certificate',
+    category: 'ISO Certificates',
+    fileType: 'PDF',
+    fileSize: '600 KB',
+  },
+  {
+    slug: 'terms-and-conditions',
+    name: 'Terms & Conditions',
+    category: 'Company Documents',
+    fileType: 'PDF',
+    fileSize: '320 KB',
+  },
+];

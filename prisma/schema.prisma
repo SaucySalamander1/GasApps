@@ -1,0 +1,170 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id                String   @id @default(cuid())
+  slug              String   @unique
+  name              String
+  category          String
+  description       String
+  images            String[]
+  industries        String[]
+  leadTime          String?
+  warranty          String?
+  certificationCodes String[]
+  features          String[]
+  specifications    ProductSpec[]
+  downloads         ProductDownload[]
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model ProductSpec {
+  id        String  @id @default(cuid())
+  label     String
+  value     String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+}
+
+model ProductDownload {
+  id        String  @id @default(cuid())
+  label     String
+  fileType  String
+  fileSize  String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+}
+
+model Service {
+  id                 String   @id @default(cuid())
+  slug               String   @unique
+  name               String
+  summary            String
+  description        String
+  features           String[]
+  images             String[]
+  duration           String?
+  coverageArea       String?
+  certificationCodes String[]
+  process            ServiceProcessStep[]
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model ServiceProcessStep {
+  id          String  @id @default(cuid())
+  title       String
+  description String
+  order       Int
+  service     Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  serviceId   String
+}
+
+model Industry {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  name         String
+  summary      String
+  description  String
+  applications String[]
+  images       String[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Project {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  name          String
+  industry      String
+  summary       String
+  challenge     String
+  solution      String
+  productSlugs  String[]
+  images        String[]
+  results       ProjectResult[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model ProjectResult {
+  id        String  @id @default(cuid())
+  metric    String
+  value     String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+}
+
+model BlogPost {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  category  String
+  date      String
+  excerpt   String
+  content   String[]
+  images    String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Certification {
+  id          String   @id @default(cuid())
+  code        String
+  name        String
+  category    String
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Resource {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  category  String
+  fileType  String
+  fileSize  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Job {
+  id         String   @id @default(cuid())
+  slug       String   @unique
+  title      String
+  department String
+  location   String
+  type       String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model FaqItem {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  category  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         String   @default("admin")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

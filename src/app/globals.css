@@ -1,26 +1,64 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Light mode (default) */
+  --color-background: #faf9f9;
+  --color-surface: #f0f1f0;
+  --color-border: #dcdfe2;
+  --color-text-primary: #14171a;
+  --color-text-secondary: #5b6168;
+  --color-accent: #1858c8;
+  --color-accent-hover: #123f94;
+  --color-accent-amber: #ff8a3d;
+
+  /* Border radius */
+  --radius-sm: 0.25rem; /* 4px  — inputs, badges */
+  --radius-md: 0.5rem; /* 8px  — buttons, cards */
+  --radius-lg: 0.75rem; /* 12px — large cards, modals */
+  --radius-full: 9999px; /* pills */
+
+  /* Section rhythm */
+  --space-section-y: 6rem; /* 96px  — vertical padding between major sections */
+  --space-section-y-lg: 8rem; /* 128px — for hero / large breaks */
+  --shadow-elevated: 0 1px 2px rgba(15, 23, 32, 0.04), 0 8px 24px rgba(15, 23, 32, 0.08);
+}
+
+.dark {
+  --color-background: #0b0d10;
+  --color-surface: #15181c;
+  --color-border: #262b31;
+  --color-text-primary: #f5f6f7;
+  --color-text-secondary: #9aa1a9;
+  --color-accent: #3d8bff;
+  --color-accent-hover: #6ba6ff;
+  --color-accent-amber: #ff8a3d;
+  --shadow-elevated: 0 1px 0 0 rgba(255, 255, 255, 0.04) inset, 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-background: var(--color-background);
+  --color-surface: var(--color-surface);
+  --color-border: var(--color-border);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-accent-amber: var(--color-accent-amber);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-full: var(--radius-full);
+  --shadow-elevated: var(--shadow-elevated);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-text-primary);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
