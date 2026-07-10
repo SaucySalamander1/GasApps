@@ -1,3 +1,10 @@
+import { AdminHeader } from '@/components/layout/AdminHeader';
+
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  return <div className="min-h-screen bg-gray-100">{children}</div>;
+  return (
+    <div className="bg-background min-h-screen">
+      <AdminHeader />
+      {children}
+    </div>
+  );
 }

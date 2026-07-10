@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -39,48 +41,45 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100 p-6">
-      <div className="w-full max-w-sm rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
-        <h1 className="text-xl font-semibold text-gray-900">GasApps Admin</h1>
-        <p className="mt-1 text-sm text-gray-500">Sign in to manage your site.</p>
+    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center p-6">
+      <div className="border-border bg-surface w-full max-w-sm rounded-lg border p-8 shadow-sm">
+        <h1 className="font-display text-text-primary text-xl font-semibold">GasApps Admin</h1>
+        <p className="text-text-secondary mt-1 text-sm">Sign in to manage your site.</p>
 
         <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
           <div>
-            <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-gray-700">
+            <label htmlFor="email" className="text-text-primary mb-1.5 block text-sm font-medium">
               Email
             </label>
-            <input
+            <Input
               id="email"
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
             />
           </div>
           <div>
-            <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="text-text-primary mb-1.5 block text-sm font-medium"
+            >
               Password
             </label>
-            <input
+            <Input
               id="password"
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-500"
             />
           </div>
 
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-red-500">{error}</p>}
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="mt-2 rounded-md bg-gray-900 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800 disabled:opacity-50"
-          >
+          <Button type="submit" disabled={isSubmitting} className="mt-2 w-full">
             {isSubmitting ? 'Signing in...' : 'Sign In'}
-          </button>
+          </Button>
         </form>
       </div>
     </div>
