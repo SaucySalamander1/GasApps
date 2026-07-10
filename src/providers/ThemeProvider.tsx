@@ -27,6 +27,7 @@ export function ThemeProvider({
         ? "dark"
         : "light");
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reads persisted/system theme on mount, no SSR equivalent
     setTheme(initial);
   }, []);
 

@@ -66,9 +66,10 @@ export default function InquiriesInbox() {
     }
   }, []);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- initial data load on mount
+        load();
+    }, [load]);
 
   const filtered = useMemo(
     () => (typeFilter === 'all' ? leads : leads.filter((l) => l.type === typeFilter)),

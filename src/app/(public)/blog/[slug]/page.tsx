@@ -1,5 +1,6 @@
 ﻿import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft } from 'lucide-react';
 import { Container } from '@/components/layout/Container';
 import { Badge } from '@/components/ui/Badge';
@@ -45,15 +46,18 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             {post.title}
           </h1>
 
-          <div className="mt-8">
+          <div className="relative mt-8 h-72 w-full overflow-hidden rounded-lg md:h-96">
             {post.images?.[0] ? (
-              <img
+              <Image
                 src={post.images[0]}
                 alt={post.title}
-                className="h-72 w-full rounded-lg object-cover md:h-96"
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 768px"
+                className="object-cover"
               />
             ) : (
-              <ImagePlaceholder className="h-72 w-full rounded-lg md:h-96" />
+              <ImagePlaceholder className="h-full w-full" />
             )}
           </div>
 
@@ -86,15 +90,19 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
               {otherPosts.map((other) => (
                 <Card key={other.slug} className="overflow-hidden">
-                  {other.images?.[0] ? (
-                    <img
-                      src={other.images[0]}
-                      alt={other.title}
-                      className="h-40 w-full object-cover"
-                    />
-                  ) : (
-                    <ImagePlaceholder className="h-40 w-full" />
-                  )}
+                  <div className="relative h-40 w-full">
+                    {other.images?.[0] ? (
+                      <Image
+                        src={other.images[0]}
+                        alt={other.title}
+                        fill
+                        sizes="(max-width: 640px) 100vw, 50vw"
+                        className="object-cover"
+                      />
+                    ) : (
+                      <ImagePlaceholder className="h-full w-full" />
+                    )}
+                  </div>
                   <CardHeader>
                     <Badge variant="default" className="mb-2 w-fit">
                       {other.category}

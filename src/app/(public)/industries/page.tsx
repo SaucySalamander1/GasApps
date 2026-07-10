@@ -1,4 +1,5 @@
 ﻿import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import { PageHeader } from '@/components/sections/PageHeader';
 import { Container } from '@/components/layout/Container';
@@ -19,15 +20,19 @@ export default function IndustriesPage() {
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {industries.map((industry) => (
               <Card key={industry.slug} className="overflow-hidden">
-                {industry.images?.[0] ? (
-                  <img
-                    src={industry.images[0]}
-                    alt={industry.name}
-                    className="h-40 w-full object-cover"
-                  />
-                ) : (
-                  <ImagePlaceholder className="h-40 w-full" />
-                )}
+                <div className="relative h-40 w-full">
+                  {industry.images?.[0] ? (
+                    <Image
+                      src={industry.images[0]}
+                      alt={industry.name}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      className="object-cover"
+                    />
+                  ) : (
+                    <ImagePlaceholder className="h-full w-full" />
+                  )}
+                </div>
                 <CardHeader>
                   <CardTitle className="text-base">{industry.name}</CardTitle>
                   <CardDescription>{industry.summary}</CardDescription>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import { Container } from '@/components/layout/Container';
 import { Button } from '@/components/ui/Button';
@@ -32,13 +33,16 @@ export function Hero() {
     <section className="relative flex min-h-[85vh] items-center overflow-hidden">
       {/* Rotating background images, crossfaded */}
       {HERO_IMAGES.map((src, index) => (
-        <img
+        <Image
           key={src}
           src={src}
           alt=""
+          fill
+          priority={index === 0}
+          sizes="100vw"
           aria-hidden={index !== activeIndex}
           className={cn(
-            'absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out',
+            'object-cover transition-opacity duration-1000 ease-in-out',
             index === activeIndex ? 'opacity-100' : 'opacity-0'
           )}
         />

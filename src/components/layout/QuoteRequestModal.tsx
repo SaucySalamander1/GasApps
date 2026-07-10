@@ -26,6 +26,7 @@ export function QuoteRequestModal() {
 
   useEffect(() => {
     if (isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- prefill form when modal opens
       setFormData((prev) => ({ ...prev, productOrService: prefill.productName ?? '' }));
     }
   }, [isOpen, prefill]);

@@ -2,17 +2,13 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { Search, X } from 'lucide-react';
-import { cn } from '@/utils/cn';
+import { Search, X, Loader2 } from 'lucide-react';
 
-// Placeholder data — replace with real product/content search once Products (Module 8)
-// and backend search (Module 20/26) exist.
-const mockResults = [
-  { label: 'Ball Valves', category: 'Products', href: '/products' },
-  { label: 'Pressure Gauges', category: 'Products', href: '/products' },
-  { label: 'Calibration Services', category: 'Services', href: '/services' },
-  { label: 'ISO Certifications', category: 'Resources', href: '/certifications' },
-];
+interface SearchResult {
+  label: string;
+  category: string;
+  href: string;
+}
 
 interface SearchModalProps {
   isOpen: boolean;
@@ -21,10 +17,13 @@ interface SearchModalProps {
 
 export function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const [query, setQuery] = useState('');
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
   const [mounted, setMounted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional mount flag for SSR-safe hydration
     setMounted(true);
   }, []);
 
@@ -46,15 +45,46 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
   }, [isOpen, onClose]);
 
   useEffect(() => {
-    if (!isOpen) setQuery('');
+    if (!isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- clear stale query when modal closes
+      setQuery('');
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- clear stale results when modal closes
+      setResults([]);
+    }
   }, [isOpen]);
 
-  if (!mounted || !isOpen) return null;
+  useEffect(() => {
+    if (query.trim().length < 2) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- clear results when query too short to search
+      setResults([]);
+      return;
+    }
 
-  const filtered =
-    query.length > 0
-      ? mockResults.filter((item) => item.label.toLowerCase().includes(query.toLowerCase()))
-      : mockResults;
+    const controller = new AbortController();
+    const timeout = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`, {
+          signal: controller.signal,
+        });
+        const data = await res.json();
+        setResults(data.results ?? []);
+      } catch (error) {
+        if (!(error instanceof DOMException && error.name === 'AbortError')) {
+          setResults([]);
+        }
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300);
+
+    return () => {
+      clearTimeout(timeout);
+      controller.abort();
+    };
+  }, [query]);
+
+  if (!mounted || !isOpen) return null;
 
   return createPortal(
     <div className="fixed inset-0 z-[70] flex items-start justify-center pt-24">
@@ -76,9 +106,12 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search products, services, resources..."
+            placeholder="Search products, services, industries..."
             className="text-text-primary placeholder:text-text-secondary flex-1 bg-transparent text-sm outline-none"
           />
+          {isSearching && (
+            <Loader2 size={16} className="text-text-secondary shrink-0 animate-spin" />
+          )}
           <button
             type="button"
             onClick={onClose}
@@ -90,14 +123,18 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
         </div>
 
         <div className="max-h-80 overflow-y-auto p-2">
-          {filtered.length === 0 ? (
+          {query.trim().length < 2 ? (
+            <p className="text-text-secondary px-3 py-6 text-center text-sm">
+              Type at least 2 characters to search
+            </p>
+          ) : results.length === 0 && !isSearching ? (
             <p className="text-text-secondary px-3 py-6 text-center text-sm">
               No results for &ldquo;{query}&rdquo;
             </p>
           ) : (
-            filtered.map((item) => (
-              <a
-                key={item.label}
+            results.map((item) => (
+              
+              <a  key={`${item.category}-${item.label}`}
                 href={item.href}
                 className="hover:bg-background flex items-center justify-between rounded-md px-3 py-2.5 text-sm transition-colors"
               >

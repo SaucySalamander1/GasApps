@@ -1,7 +1,6 @@
 ﻿'use client';
 
 import { useState, useMemo } from 'react';
-import Link from 'next/link';
 import { FileText, Download as DownloadIcon, Search as SearchIcon } from 'lucide-react';
 import { PageHeader } from '@/components/sections/PageHeader';
 import { Container } from '@/components/layout/Container';

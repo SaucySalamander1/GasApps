@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { Container } from '@/components/layout/Container';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
@@ -39,15 +40,18 @@ export default async function IndustryDetailPage({ params }: IndustryPageProps) 
 
       <section className="py-[var(--space-section-y)]">
         <Container className="grid grid-cols-1 gap-10 lg:grid-cols-2">
-          <div>
+          <div className="relative h-80 w-full overflow-hidden rounded-lg lg:h-full">
             {industry.images?.[0] ? (
-              <img
+              <Image
                 src={industry.images[0]}
                 alt={industry.name}
-                className="h-80 w-full rounded-lg object-cover lg:h-full"
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
               />
             ) : (
-              <ImagePlaceholder className="h-80 w-full rounded-lg lg:h-full" />
+              <ImagePlaceholder className="h-full w-full" />
             )}
           </div>
 
@@ -96,15 +100,19 @@ export default async function IndustryDetailPage({ params }: IndustryPageProps) 
             <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {relatedProducts.map((product) => (
                 <Card key={product.slug} className="overflow-hidden">
-                  {product.images?.[0] ? (
-                    <img
-                      src={product.images[0]}
-                      alt={product.name}
-                      className="h-40 w-full object-cover"
-                    />
-                  ) : (
-                    <ImagePlaceholder className="h-40 w-full" />
-                  )}
+                  <div className="relative h-40 w-full">
+                    {product.images?.[0] ? (
+                      <Image
+                        src={product.images[0]}
+                        alt={product.name}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover"
+                      />
+                    ) : (
+                      <ImagePlaceholder className="h-full w-full" />
+                    )}
+                  </div>
                   <CardHeader>
                     <CardTitle className="text-base">{product.name}</CardTitle>
                     <CardDescription>{product.description}</CardDescription>
@@ -133,15 +141,19 @@ export default async function IndustryDetailPage({ params }: IndustryPageProps) 
             <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
               {otherIndustries.map((other) => (
                 <Card key={other.slug} className="overflow-hidden">
-                  {other.images?.[0] ? (
-                    <img
-                      src={other.images[0]}
-                      alt={other.name}
-                      className="h-32 w-full object-cover"
-                    />
-                  ) : (
-                    <ImagePlaceholder className="h-32 w-full" />
-                  )}
+                  <div className="relative h-32 w-full">
+                    {other.images?.[0] ? (
+                      <Image
+                        src={other.images[0]}
+                        alt={other.name}
+                        fill
+                        sizes="(max-width: 640px) 100vw, 33vw"
+                        className="object-cover"
+                      />
+                    ) : (
+                      <ImagePlaceholder className="h-full w-full" />
+                    )}
+                  </div>
                   <CardHeader>
                     <CardTitle className="text-base">{other.name}</CardTitle>
                     <CardDescription>{other.summary}</CardDescription>

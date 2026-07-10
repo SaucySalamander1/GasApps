@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, type HTMLAttributes, type ReactNode } from 'react';
+import { createContext, useContext, useState, type ReactNode } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { cn } from '@/utils/cn';
 

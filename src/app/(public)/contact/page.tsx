@@ -1,4 +1,5 @@
-﻿import { MapPin, Phone, Mail, Clock } from 'lucide-react';
+﻿import Image from 'next/image';
+import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import { PageHeader } from '@/components/sections/PageHeader';
 import { Container } from '@/components/layout/Container';
 import { ContactForm } from '@/components/sections/ContactForm';
@@ -32,11 +33,15 @@ export default function ContactPage() {
           </div>
 
           <div className="hidden lg:block">
-            <img
-              src="https://images.unsplash.com/photo-1717386255773-1e3037c81788?w=1200&auto=format&fit=crop&q=80"
-              alt="GasApps engineering team at work"
-              className="h-72 w-full rounded-lg object-cover"
-            />
+            <div className="relative h-72 w-full overflow-hidden rounded-lg">
+              <Image
+                src="https://images.unsplash.com/photo-1717386255773-1e3037c81788?w=1200&auto=format&fit=crop&q=80"
+                alt="GasApps engineering team at work"
+                fill
+                sizes="50vw"
+                className="object-cover"
+              />
+            </div>
             <div className="border-border bg-surface mt-6 rounded-lg border p-6">
               <p className="font-display text-lg font-semibold">Quick Response Guaranteed</p>
               <p className="text-text-secondary mt-2 text-sm leading-relaxed">
@@ -91,8 +96,8 @@ export default function ContactPage() {
               <h3 className="font-display text-base font-semibold">Follow Us</h3>
               <div className="mt-3 flex gap-3">
                 {socialLinks.map((social) => (
-                  <a
-                    key={social.label}
+                  
+                  <a  key={social.label}
                     href={social.href}
                     aria-label={social.label}
                     className="border-border text-text-secondary hover:border-accent hover:text-accent rounded-md border px-3 py-1.5 text-sm transition-colors"

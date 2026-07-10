@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Search as SearchIcon } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { PageHeader } from '@/components/sections/PageHeader';
 import { Container } from '@/components/layout/Container';
 import { Input } from '@/components/ui/Input';
@@ -139,15 +140,19 @@ export function ProductsPageClient({ products }: ProductsPageClientProps) {
             <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {paginated.map((product) => (
                 <Card key={product.slug} className="overflow-hidden">
-                  {product.images?.[0] ? (
-                    <img
-                      src={product.images[0]}
-                      alt={product.name}
-                      className="h-48 w-full object-cover"
-                    />
-                  ) : (
-                    <ImagePlaceholder className="h-48 w-full" />
-                  )}
+                  <div className="relative h-48 w-full">
+                    {product.images?.[0] ? (
+                      <Image
+                        src={product.images[0]}
+                        alt={product.name}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover"
+                      />
+                    ) : (
+                      <ImagePlaceholder className="h-full w-full" />
+                    )}
+                  </div>
                   <CardHeader>
                     <Badge variant="default" className="mb-2 w-fit">
                       {product.category}

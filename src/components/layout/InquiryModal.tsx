@@ -19,6 +19,7 @@ export function InquiryModal() {
 
   useEffect(() => {
     if (isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- prefill form when modal opens
       setFormData((prev) => ({ ...prev, itemName: prefill.itemName ?? '' }));
     }
   }, [isOpen, prefill]);

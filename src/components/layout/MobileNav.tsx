@@ -57,6 +57,7 @@ export function MobileNav({ onSearchOpen }: MobileNavProps) {
   const { openQuoteModal } = useQuoteModal();
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional mount flag for SSR-safe hydration
     setMounted(true);
   }, []);
 

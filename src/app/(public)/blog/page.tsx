@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Search as SearchIcon } from 'lucide-react';
 import { PageHeader } from '@/components/sections/PageHeader';
 import { Container } from '@/components/layout/Container';
@@ -87,15 +88,19 @@ export default function BlogPage() {
             <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
               {filtered.map((post) => (
                 <Card key={post.slug} className="overflow-hidden">
-                  {post.images?.[0] ? (
-                    <img
-                      src={post.images[0]}
-                      alt={post.title}
-                      className="h-44 w-full object-cover"
-                    />
-                  ) : (
-                    <ImagePlaceholder className="h-44 w-full" />
-                  )}
+                  <div className="relative h-44 w-full">
+                    {post.images?.[0] ? (
+                      <Image
+                        src={post.images[0]}
+                        alt={post.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover"
+                      />
+                    ) : (
+                      <ImagePlaceholder className="h-full w-full" />
+                    )}
+                  </div>
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <Badge variant="default">{post.category}</Badge>
