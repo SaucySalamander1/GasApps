@@ -14,6 +14,8 @@ import {
   Briefcase,
   HelpCircle,
   Settings,
+  Mail,
+  Bot,
   LucideIcon,
 } from "lucide-react";
 
@@ -40,6 +42,7 @@ const navigation: NavGroup[] = [
   {
     title: "Content",
     items: [
+      { title: "Inquiries", href: "/inquiries", icon: Mail },
       { title: "Products", href: "/dashboard/products", icon: Package, soon: true },
       { title: "Services", href: "/dashboard/services", icon: Wrench, soon: true },
       { title: "Industries", href: "/dashboard/industries", icon: Factory, soon: true },
@@ -53,7 +56,10 @@ const navigation: NavGroup[] = [
   },
   {
     title: "System",
-    items: [{ title: "Settings", href: "/dashboard/settings", icon: Settings, soon: true }],
+    items: [
+      { title: "AI Assistant", href: "/ai", icon: Bot },
+      { title: "Settings", href: "/dashboard/settings", icon: Settings, soon: true },
+    ],
   },
 ];
 

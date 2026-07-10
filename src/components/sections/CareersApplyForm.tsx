@@ -16,18 +16,34 @@ export function CareersApplyForm() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) return;
 
     setIsSubmitting(true);
 
-    // Placeholder \u2014 replace with real API call once Email Service (Module 41) exists.
-    setTimeout(() => {
+    try {
+      const res = await fetch('/api/careers/apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error ?? 'Something went wrong.');
+      }
+
       showToast('Application received! We\u2019ll be in touch if there\u2019s a match.', 'success');
       setFormData({ name: '', email: '', position: '', message: '' });
+    } catch (error) {
+      showToast(
+        error instanceof Error ? error.message : 'Something went wrong. Please try again.',
+        'error'
+      );
+    } finally {
       setIsSubmitting(false);
-    }, 800);
+    }
   }
 
   return (

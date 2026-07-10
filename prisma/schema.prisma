@@ -168,3 +168,55 @@ model AdminUser {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
+
+enum RequestStatus {
+  NEW
+  IN_PROGRESS
+  RESOLVED
+}
+
+model QuoteRequest {
+  id               String        @id @default(cuid())
+  name             String
+  email            String
+  company          String?
+  productOrService String
+  quantity         String?
+  message          String?
+  status           RequestStatus @default(NEW)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+}
+
+model ServiceRequest {
+  id        String        @id @default(cuid())
+  name      String
+  email     String
+  itemName  String
+  message   String?
+  status    RequestStatus @default(NEW)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model ContactMessage {
+  id        String        @id @default(cuid())
+  name      String
+  email     String
+  subject   String?
+  message   String
+  status    RequestStatus @default(NEW)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model JobApplication {
+  id        String        @id @default(cuid())
+  name      String
+  email     String
+  position  String
+  message   String
+  status    RequestStatus @default(NEW)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}

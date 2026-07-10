@@ -16,18 +16,34 @@ export function ContactForm() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) return;
 
     setIsSubmitting(true);
 
-    // Placeholder — replace with real API call once Email Service (Module 41) exists.
-    setTimeout(() => {
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error ?? 'Something went wrong.');
+      }
+
       showToast('Message sent! We\u2019ll get back to you soon.', 'success');
       setFormData({ name: '', email: '', subject: '', message: '' });
+    } catch (error) {
+      showToast(
+        error instanceof Error ? error.message : 'Something went wrong. Please try again.',
+        'error'
+      );
+    } finally {
       setIsSubmitting(false);
-    }, 800);
+    }
   }
 
   return (
