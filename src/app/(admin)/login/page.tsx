@@ -24,17 +24,30 @@ export default function AdminLoginPage() {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
+      // The server can fail before it ever reaches our JSON.stringify'd
+      // error response (e.g. a thrown error during module init, or a
+      // platform-level 500 in production). Don't let .json() throwing
+      // in that case get swallowed into a generic, undebuggable message.
+      let data: { error?: string; success?: boolean } = {};
+      const rawBody = await response.text();
+      try {
+        data = rawBody ? JSON.parse(rawBody) : {};
+      } catch {
+        console.error('Login response was not JSON:', response.status, rawBody);
+        setError(`Server error (${response.status}). Check the server logs / Network tab.`);
+        return;
+      }
 
       if (!response.ok) {
-        setError(data.error ?? 'Login failed');
+        setError(data.error ?? `Login failed (${response.status})`);
         return;
       }
 
       router.push('/dashboard');
       router.refresh();
-    } catch {
-      setError('Something went wrong. Please try again.');
+    } catch (err) {
+      console.error('Login request failed:', err);
+      setError('Could not reach the server. Check your connection and try again.');
     } finally {
       setIsSubmitting(false);
     }

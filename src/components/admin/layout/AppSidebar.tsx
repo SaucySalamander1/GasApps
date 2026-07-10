@@ -43,8 +43,8 @@ const navigation: NavGroup[] = [
     title: "Content",
     items: [
       { title: "Inquiries", href: "/inquiries", icon: Mail },
-      { title: "Products", href: "/dashboard/products", icon: Package, soon: true },
-      { title: "Services", href: "/dashboard/services", icon: Wrench, soon: true },
+      { title: "Products", href: "/dashboard/products", icon: Package },
+      { title: "Services", href: "/dashboard/services", icon: Wrench },
       { title: "Industries", href: "/dashboard/industries", icon: Factory, soon: true },
       { title: "Projects", href: "/dashboard/projects", icon: FolderKanban, soon: true },
       { title: "Blog", href: "/dashboard/blog", icon: Newspaper, soon: true },
