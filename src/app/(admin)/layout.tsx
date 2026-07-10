@@ -1,10 +1,16 @@
-import { AdminHeader } from '@/components/layout/AdminHeader';
+import { redirect } from "next/navigation";
+import { getSession } from "@/lib/auth";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="bg-background min-h-screen">
-      <AdminHeader />
-      {children}
-    </div>
-  );
+export default async function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const session = await getSession();
+
+  if (!session) {
+    redirect("/login");
+  }
+
+  return children;
 }
