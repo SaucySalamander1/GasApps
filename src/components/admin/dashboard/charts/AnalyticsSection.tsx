@@ -1,15 +1,20 @@
-import RevenueChart from "./RevenueChart";
-import VisitorsChart from "./VisitorChart";
+import ContentGrowthChart from "./ContentGrowthChart";
+import ContentByTypeChart from "./ContentByTypeChart";
+import type { DashboardStats } from "@/lib/dashboard-stats";
 
-export default function AnalyticsSection() {
+interface AnalyticsSectionProps {
+  stats: DashboardStats;
+}
+
+export default function AnalyticsSection({ stats }: AnalyticsSectionProps) {
   return (
     <section className="grid gap-6 xl:grid-cols-5">
       <div className="xl:col-span-3">
-        <RevenueChart />
+        <ContentGrowthChart data={stats.monthlyGrowth} />
       </div>
 
       <div className="xl:col-span-2">
-        <VisitorsChart />
+        <ContentByTypeChart data={stats.contentByType} />
       </div>
     </section>
   );

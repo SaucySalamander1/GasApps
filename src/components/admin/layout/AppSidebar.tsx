@@ -5,73 +5,118 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Package,
-  ShoppingCart,
-  Users,
-  FileText,
+  Wrench,
+  Factory,
+  FolderKanban,
+  Newspaper,
+  ShieldCheck,
+  Download,
+  Briefcase,
+  HelpCircle,
   Settings,
+  LucideIcon,
 } from "lucide-react";
 
-const items = [
-  { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { title: "Products", href: "/dashboard/products", icon: Package },
-  { title: "Orders", href: "/dashboard/orders", icon: ShoppingCart },
-  { title: "Customers", href: "/dashboard/customers", icon: Users },
-  { title: "Blogs", href: "/dashboard/blogs", icon: FileText },
-  { title: "Settings", href: "/dashboard/settings", icon: Settings },
+import { Badge } from "@/components/ui/Badge";
+
+interface NavItem {
+  title: string;
+  href: string;
+  icon: LucideIcon;
+  /** Pages not built yet render as disabled with a "Soon" badge instead of a dead link. */
+  soon?: boolean;
+}
+
+interface NavGroup {
+  title: string;
+  items: NavItem[];
+}
+
+const navigation: NavGroup[] = [
+  {
+    title: "Overview",
+    items: [{ title: "Dashboard", href: "/dashboard", icon: LayoutDashboard }],
+  },
+  {
+    title: "Content",
+    items: [
+      { title: "Products", href: "/dashboard/products", icon: Package, soon: true },
+      { title: "Services", href: "/dashboard/services", icon: Wrench, soon: true },
+      { title: "Industries", href: "/dashboard/industries", icon: Factory, soon: true },
+      { title: "Projects", href: "/dashboard/projects", icon: FolderKanban, soon: true },
+      { title: "Blog", href: "/dashboard/blog", icon: Newspaper, soon: true },
+      { title: "Certifications", href: "/dashboard/certifications", icon: ShieldCheck, soon: true },
+      { title: "Resources", href: "/dashboard/resources", icon: Download, soon: true },
+      { title: "Jobs", href: "/dashboard/jobs", icon: Briefcase, soon: true },
+      { title: "FAQs", href: "/dashboard/faqs", icon: HelpCircle, soon: true },
+    ],
+  },
+  {
+    title: "System",
+    items: [{ title: "Settings", href: "/dashboard/settings", icon: Settings, soon: true }],
+  },
 ];
 
 export default function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="sticky top-16 flex h-[calc(100vh-64px)] w-[260px] shrink-0 flex-col border-r border-border bg-card">
-      {/* Navigation Header */}
-      <div className="border-b border-border px-6 py-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">
-          Navigation
-        </p>
-      </div>
+    <aside className="sticky top-18 flex h-[calc(100vh-4.5rem)] w-64 shrink-0 flex-col overflow-y-auto border-r border-border bg-surface">
+      <nav className="flex-1 space-y-6 p-4">
+        {navigation.map((group) => (
+          <div key={group.title}>
+            <p className="px-3 pb-2 text-xs font-semibold tracking-[0.15em] text-text-secondary uppercase">
+              {group.title}
+            </p>
 
-      {/* Navigation */}
-      <nav className="flex-1 space-y-1 p-4">
-        {items.map((item) => {
-          const Icon = item.icon;
-          const active = pathname === item.href;
+            <div className="space-y-0.5">
+              {group.items.map((item) => {
+                const Icon = item.icon;
+                const active = pathname === item.href;
 
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`group relative flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
-                active
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              }`}
-            >
-              {active && (
-                <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-primary" />
-              )}
+                if (item.soon) {
+                  return (
+                    <div
+                      key={item.href}
+                      className="flex cursor-not-allowed items-center justify-between rounded-md px-3 py-2 text-sm text-text-secondary/50"
+                    >
+                      <span className="flex items-center gap-3">
+                        <Icon className="h-4 w-4" />
+                        {item.title}
+                      </span>
+                      <Badge className="text-[10px]">Soon</Badge>
+                    </div>
+                  );
+                }
 
-              <Icon className="h-5 w-5" />
-
-              <span>{item.title}</span>
-            </Link>
-          );
-        })}
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`relative flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                      active
+                        ? "bg-accent/10 text-accent"
+                        : "text-text-secondary hover:bg-background hover:text-text-primary"
+                    }`}
+                  >
+                    {active && (
+                      <span className="absolute top-1.5 bottom-1.5 left-0 w-0.5 rounded-r-full bg-accent" />
+                    )}
+                    <Icon className="h-4 w-4" />
+                    {item.title}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
 
-      {/* Footer */}
-      <div className="border-t border-border p-6">
-        <p className="font-display text-sm font-semibold text-foreground">
-          Administrator
-        </p>
-
-        <div className="mt-2 flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-green-500" />
-
-          <span className="text-sm text-muted-foreground">
-            Online
-          </span>
+      <div className="border-t border-border p-4">
+        <p className="font-display text-sm font-semibold text-text-primary">Administrator</p>
+        <div className="mt-1.5 flex items-center gap-2">
+          <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+          <span className="text-xs text-text-secondary">Online</span>
         </div>
       </div>
     </aside>

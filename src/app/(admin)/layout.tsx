@@ -1,16 +1,11 @@
-import { redirect } from "next/navigation";
-import { getSession } from "@/lib/auth";
-
-export default async function AdminLayout({
+export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getSession();
-
-  if (!session) {
-    redirect("/login");
-  }
-
+  // NOTE: no auth check here. This layout wraps BOTH /login and the
+  // (protected) group, so redirecting to /login here would infinite-loop
+  // on the login page itself. The real guard lives in
+  // (admin)/(protected)/layout.tsx, which only wraps authenticated routes.
   return children;
 }

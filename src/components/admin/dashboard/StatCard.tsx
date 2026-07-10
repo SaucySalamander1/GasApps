@@ -1,54 +1,28 @@
-"use client";
-
 import { Card, CardContent } from "@/components/ui/Card";
-import { ArrowDownRight, ArrowUpRight, LucideIcon } from "lucide-react";
+import { LucideIcon } from "lucide-react";
 
 interface StatCardProps {
   title: string;
-  value: string;
-  change: number;
+  value: number;
+  suffix?: string;
   icon: LucideIcon;
 }
 
-export default function StatCard({
-  title,
-  value,
-  change,
-  icon: Icon,
-}: StatCardProps) {
-  const positive = change >= 0;
-
+export default function StatCard({ title, value, suffix, icon: Icon }: StatCardProps) {
   return (
-    <Card className="transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+    <Card className="transition-colors hover:border-accent/40">
       <CardContent className="p-6">
-        <div className="mb-6 flex items-center justify-between">
-          <div className="rounded-xl bg-primary/10 p-3">
-            <Icon className="h-5 w-5 text-primary" />
-          </div>
-
-          <div
-            className={`flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold ${
-              positive
-                ? "bg-green-500/10 text-green-600"
-                : "bg-red-500/10 text-red-600"
-            }`}
-          >
-            {positive ? (
-              <ArrowUpRight className="h-3 w-3" />
-            ) : (
-              <ArrowDownRight className="h-3 w-3" />
-            )}
-
-            {Math.abs(change)}%
+        <div className="mb-5 flex items-center justify-between">
+          <div className="rounded-md bg-accent/10 p-2.5">
+            <Icon className="h-4.5 w-4.5 text-accent" strokeWidth={2} />
           </div>
         </div>
 
-        <h3 className="text-sm text-muted-foreground">
-          {title}
-        </h3>
+        <h3 className="text-sm text-text-secondary">{title}</h3>
 
-        <p className="mt-2 text-3xl font-bold">
-          {value}
+        <p className="mt-1.5 font-mono text-3xl font-semibold tracking-tight text-text-primary">
+          {value.toLocaleString()}
+          {suffix && <span className="ml-1 text-lg text-text-secondary">{suffix}</span>}
         </p>
       </CardContent>
     </Card>
