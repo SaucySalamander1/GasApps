@@ -3,7 +3,7 @@ import { Container } from '@/components/layout/Container';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/Card';
 import { ImagePlaceholder } from '@/components/ui/ImagePlaceholder';
 import { ServicesConsultationCta } from '@/components/sections/ServicesConsultationCta';
-import { services } from '@/data/services';
+import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 
 const genericProcess = [
@@ -29,7 +29,13 @@ const genericProcess = [
   },
 ];
 
-export default function ServicesPage() {
+// Services are managed live from the admin panel, so this page always reads
+// the current DB state rather than a build-time snapshot.
+export const dynamic = 'force-dynamic';
+
+export default async function ServicesPage() {
+  const services = await prisma.service.findMany({ orderBy: { name: 'asc' } });
+
   return (
     <>
       <PageHeader

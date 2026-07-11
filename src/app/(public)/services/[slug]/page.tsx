@@ -7,25 +7,49 @@ import { Badge } from '@/components/ui/Badge';
 import { ImagePlaceholder } from '@/components/ui/ImagePlaceholder';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/Card';
 import { ServiceQuoteButton } from '@/components/sections/ServiceQuoteButton';
-import { services } from '@/data/services';
+import { prisma } from '@/lib/prisma';
 
 interface ServicePageProps {
   params: Promise<{ slug: string }>;
 }
 
-export function generateStaticParams() {
-  return services.map((service) => ({ slug: service.slug }));
-}
+// Services are managed live from the admin panel, so this page always reads
+// the current DB state rather than pre-rendering a fixed set of slugs.
+export const dynamic = 'force-dynamic';
 
 export default async function ServiceDetailPage({ params }: ServicePageProps) {
   const { slug } = await params;
-  const service = services.find((s) => s.slug === slug);
 
-  if (!service) {
+  const dbService = await prisma.service.findUnique({
+    where: { slug },
+    include: { process: { orderBy: { order: 'asc' } } },
+  });
+
+  if (!dbService) {
     notFound();
   }
 
-  const relatedServices = services.filter((s) => s.slug !== service.slug).slice(0, 2);
+  const service = {
+    slug: dbService.slug,
+    name: dbService.name,
+    description: dbService.description,
+    images: dbService.images,
+    duration: dbService.duration ?? undefined,
+    coverageArea: dbService.coverageArea ?? undefined,
+    certificationCodes: dbService.certificationCodes,
+    features: dbService.features,
+    process: dbService.process.map((s) => ({ title: s.title, description: s.description })),
+  };
+
+  const dbRelated = await prisma.service.findMany({
+    where: { slug: { not: service.slug } },
+    take: 2,
+  });
+  const relatedServices = dbRelated.map((s) => ({
+    slug: s.slug,
+    name: s.name,
+    summary: s.summary,
+  }));
 
   return (
     <>

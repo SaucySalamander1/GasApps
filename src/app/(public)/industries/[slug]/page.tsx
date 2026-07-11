@@ -6,27 +6,54 @@ import { Container } from '@/components/layout/Container';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { ImagePlaceholder } from '@/components/ui/ImagePlaceholder';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/Card';
-import { industries } from '@/data/industries';
-import { products } from '@/data/products';
+import { prisma } from '@/lib/prisma';
 
 interface IndustryPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export function generateStaticParams() {
-  return industries.map((industry) => ({ slug: industry.slug }));
-}
+// Industries are managed live from the admin panel, so this page always
+// reads the current DB state rather than pre-rendering a fixed set of slugs.
+export const dynamic = 'force-dynamic';
 
 export default async function IndustryDetailPage({ params }: IndustryPageProps) {
   const { slug } = await params;
-  const industry = industries.find((i) => i.slug === slug);
 
-  if (!industry) {
+  const dbIndustry = await prisma.industry.findUnique({ where: { slug } });
+
+  if (!dbIndustry) {
     notFound();
   }
 
-  const otherIndustries = industries.filter((i) => i.slug !== industry.slug).slice(0, 3);
-  const relatedProducts = products.filter((p) => p.industries?.includes(industry.slug)).slice(0, 3);
+  const industry = {
+    slug: dbIndustry.slug,
+    name: dbIndustry.name,
+    description: dbIndustry.description,
+    images: dbIndustry.images,
+    applications: dbIndustry.applications,
+  };
+
+  const dbOtherIndustries = await prisma.industry.findMany({
+    where: { slug: { not: industry.slug } },
+    take: 3,
+  });
+  const otherIndustries = dbOtherIndustries.map((i) => ({
+    slug: i.slug,
+    name: i.name,
+    summary: i.summary,
+    images: i.images,
+  }));
+
+  const dbRelatedProducts = await prisma.product.findMany({
+    where: { industries: { has: industry.slug } },
+    take: 3,
+  });
+  const relatedProducts = dbRelatedProducts.map((p) => ({
+    slug: p.slug,
+    name: p.name,
+    description: p.description,
+    images: p.images,
+  }));
 
   return (
     <>

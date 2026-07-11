@@ -7,25 +7,30 @@ import { Badge } from '@/components/ui/Badge';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { ImagePlaceholder } from '@/components/ui/ImagePlaceholder';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/Card';
-import { blogPosts } from '@/data/blog';
+import { prisma } from '@/lib/prisma';
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export function generateStaticParams() {
-  return blogPosts.map((post) => ({ slug: post.slug }));
-}
+// Blog posts are managed live from the admin panel, so this page always
+// reads the current DB state rather than pre-rendering a fixed set of slugs.
+export const dynamic = 'force-dynamic';
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
-  const post = blogPosts.find((p) => p.slug === slug);
+
+  const post = await prisma.blogPost.findUnique({ where: { slug } });
 
   if (!post) {
     notFound();
   }
 
-  const otherPosts = blogPosts.filter((p) => p.slug !== post.slug).slice(0, 2);
+  const otherPosts = await prisma.blogPost.findMany({
+    where: { slug: { not: post.slug } },
+    take: 2,
+    orderBy: { createdAt: 'desc' },
+  });
 
   return (
     <>

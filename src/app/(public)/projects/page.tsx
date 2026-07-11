@@ -4,14 +4,22 @@ import { Container } from '@/components/layout/Container';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ImagePlaceholder } from '@/components/ui/ImagePlaceholder';
-import { projects } from '@/data/projects';
-import { industries } from '@/data/industries';
+import { prisma } from '@/lib/prisma';
 
-function getIndustryName(slug: string) {
-  return industries.find((i) => i.slug === slug)?.name ?? slug;
-}
+// Projects are managed live from the admin panel, so this page always reads
+// the current DB state rather than a build-time snapshot.
+export const dynamic = 'force-dynamic';
 
-export default function ProjectsPage() {
+export default async function ProjectsPage() {
+  const [projects, industries] = await Promise.all([
+    prisma.project.findMany({ orderBy: { updatedAt: 'desc' } }),
+    prisma.industry.findMany(),
+  ]);
+
+  function getIndustryName(slug: string) {
+    return industries.find((i) => i.slug === slug)?.name ?? slug;
+  }
+
   return (
     <>
       <PageHeader

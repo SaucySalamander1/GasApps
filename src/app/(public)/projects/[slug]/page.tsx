@@ -6,29 +6,63 @@ import { Badge } from '@/components/ui/Badge';
 import { Breadcrumb } from '@/components/ui/Breadcrumb';
 import { ImagePlaceholder } from '@/components/ui/ImagePlaceholder';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/Card';
-import { projects } from '@/data/projects';
-import { industries } from '@/data/industries';
-import { products } from '@/data/products';
+import { prisma } from '@/lib/prisma';
 
 interface ProjectPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export function generateStaticParams() {
-  return projects.map((project) => ({ slug: project.slug }));
-}
+// Projects are managed live from the admin panel, so this page always reads
+// the current DB state rather than pre-rendering a fixed set of slugs.
+export const dynamic = 'force-dynamic';
 
 export default async function ProjectDetailPage({ params }: ProjectPageProps) {
   const { slug } = await params;
-  const project = projects.find((p) => p.slug === slug);
 
-  if (!project) {
+  const dbProject = await prisma.project.findUnique({
+    where: { slug },
+    include: { results: true },
+  });
+
+  if (!dbProject) {
     notFound();
   }
 
-  const industry = industries.find((i) => i.slug === project.industry);
-  const relatedProducts = products.filter((p) => project.productSlugs?.includes(p.slug));
-  const otherProjects = projects.filter((p) => p.slug !== project.slug).slice(0, 2);
+  const project = {
+    slug: dbProject.slug,
+    name: dbProject.name,
+    industry: dbProject.industry,
+    summary: dbProject.summary,
+    challenge: dbProject.challenge,
+    solution: dbProject.solution,
+    images: dbProject.images,
+    productSlugs: dbProject.productSlugs,
+    results: dbProject.results.map((r) => ({ metric: r.metric, value: r.value })),
+  };
+
+  const industry = await prisma.industry.findUnique({ where: { slug: project.industry } });
+
+  const dbRelatedProducts =
+    project.productSlugs.length > 0
+      ? await prisma.product.findMany({ where: { slug: { in: project.productSlugs } } })
+      : [];
+  const relatedProducts = dbRelatedProducts.map((p) => ({
+    slug: p.slug,
+    name: p.name,
+    description: p.description,
+    images: p.images,
+  }));
+
+  const dbOtherProjects = await prisma.project.findMany({
+    where: { slug: { not: project.slug } },
+    take: 2,
+  });
+  const otherProjects = dbOtherProjects.map((p) => ({
+    slug: p.slug,
+    name: p.name,
+    summary: p.summary,
+    images: p.images,
+  }));
 
   return (
     <>

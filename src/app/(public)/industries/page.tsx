@@ -5,9 +5,15 @@ import { PageHeader } from '@/components/sections/PageHeader';
 import { Container } from '@/components/layout/Container';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/Card';
 import { ImagePlaceholder } from '@/components/ui/ImagePlaceholder';
-import { industries } from '@/data/industries';
+import { prisma } from '@/lib/prisma';
 
-export default function IndustriesPage() {
+// Industries are managed live from the admin panel, so this page always
+// reads the current DB state rather than a build-time snapshot.
+export const dynamic = 'force-dynamic';
+
+export default async function IndustriesPage() {
+  const industries = await prisma.industry.findMany({ orderBy: { name: 'asc' } });
+
   return (
     <>
       <PageHeader

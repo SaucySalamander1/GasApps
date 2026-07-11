@@ -9,27 +9,56 @@ import { ImagePlaceholder } from '@/components/ui/ImagePlaceholder';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/Card';
 import { ProductQuoteButton } from '@/components/sections/ProductQuoteButton';
 import { ProductInquiryButton } from '@/components/sections/ProductInquiryButton';
-import { products } from '@/data/products';
+import { prisma } from '@/lib/prisma';
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export function generateStaticParams() {
-  return products.map((product) => ({ slug: product.slug }));
-}
+// Products are managed live from the admin panel, so this page always reads
+// the current DB state rather than pre-rendering a fixed set of slugs.
+export const dynamic = 'force-dynamic';
 
 export default async function ProductDetailPage({ params }: ProductPageProps) {
   const { slug } = await params;
-  const product = products.find((p) => p.slug === slug);
 
-  if (!product) {
+  const dbProduct = await prisma.product.findUnique({
+    where: { slug },
+    include: { specifications: true, downloads: true },
+  });
+
+  if (!dbProduct) {
     notFound();
   }
 
-  const relatedProducts = products
-    .filter((p) => p.category === product.category && p.slug !== product.slug)
-    .slice(0, 3);
+  const product = {
+    slug: dbProduct.slug,
+    name: dbProduct.name,
+    category: dbProduct.category,
+    description: dbProduct.description,
+    images: dbProduct.images,
+    leadTime: dbProduct.leadTime ?? undefined,
+    warranty: dbProduct.warranty ?? undefined,
+    certificationCodes: dbProduct.certificationCodes,
+    features: dbProduct.features,
+    specifications: dbProduct.specifications.map((s) => ({ label: s.label, value: s.value })),
+    downloads: dbProduct.downloads.map((d) => ({
+      label: d.label,
+      fileType: d.fileType,
+      fileSize: d.fileSize,
+    })),
+  };
+
+  const dbRelated = await prisma.product.findMany({
+    where: { category: product.category, slug: { not: product.slug } },
+    take: 3,
+  });
+  const relatedProducts = dbRelated.map((p) => ({
+    slug: p.slug,
+    name: p.name,
+    description: p.description,
+    images: p.images,
+  }));
 
   return (
     <>
