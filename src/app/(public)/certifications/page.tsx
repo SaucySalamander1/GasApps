@@ -1,11 +1,17 @@
 ﻿import { PageHeader } from '@/components/sections/PageHeader';
 import { Container } from '@/components/layout/Container';
 import { Badge } from '@/components/ui/Badge';
-import { certifications } from '@/data/certifications';
+import { prisma } from '@/lib/prisma';
 
 const categories = ['ISO', 'Compliance', 'Accreditation'] as const;
 
-export default function CertificationsPage() {
+// Certifications are managed live from the admin panel, so this page always
+// reads the current DB state rather than a build-time snapshot.
+export const dynamic = 'force-dynamic';
+
+export default async function CertificationsPage() {
+  const certifications = await prisma.certification.findMany({ orderBy: { name: 'asc' } });
+
   return (
     <>
       <PageHeader

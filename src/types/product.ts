@@ -7,6 +7,7 @@ export interface ProductDownload {
   label: string;
   fileType: string; // e.g. 'PDF'
   fileSize: string; // e.g. '2.4 MB'
+  fileUrl?: string; // link to the actual file, once uploaded — omit if not available yet
 }
 
 export interface Product {

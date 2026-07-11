@@ -12,17 +12,34 @@ export function Newsletter() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { showToast } = useToast();
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!email) return;
 
     setIsSubmitting(true);
 
-    setTimeout(() => {
+    try {
+      const res = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error ?? 'Something went wrong.');
+      }
+
       showToast('Thanks for subscribing!', 'success');
       setEmail('');
+    } catch (error) {
+      showToast(
+        error instanceof Error ? error.message : 'Something went wrong. Please try again.',
+        'error'
+      );
+    } finally {
       setIsSubmitting(false);
-    }, 800);
+    }
   }
 
   return (

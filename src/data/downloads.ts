@@ -14,6 +14,7 @@ export function getAllDownloads(): DownloadItem[] {
       sourceHref: `/products/${product.slug}`,
       fileType: file.fileType,
       fileSize: file.fileSize,
+      fileUrl: file.fileUrl,
     }))
   );
 
@@ -24,6 +25,7 @@ export function getAllDownloads(): DownloadItem[] {
     sourceHref: '/resources',
     fileType: resource.fileType,
     fileSize: resource.fileSize,
+    fileUrl: resource.fileUrl,
   }));
 
   return [...productDownloads, ...resourceDownloads];

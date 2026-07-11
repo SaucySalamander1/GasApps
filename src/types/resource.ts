@@ -14,4 +14,5 @@ export interface Resource {
   category: ResourceCategory;
   fileType: string;
   fileSize: string;
+  fileUrl?: string; // link to the actual file, once uploaded — omit if not available yet
 }
