@@ -50,8 +50,8 @@ const navigation: NavGroup[] = [
       { title: "Blog", href: "/dashboard/blog", icon: Newspaper },
       { title: "Certifications", href: "/dashboard/certifications", icon: ShieldCheck },
       { title: "Resources", href: "/dashboard/resources", icon: Download },
-      { title: "Jobs", href: "/dashboard/jobs", icon: Briefcase, soon: true },
-      { title: "FAQs", href: "/dashboard/faqs", icon: HelpCircle, soon: true },
+      { title: "Jobs", href: "/dashboard/jobs", icon: Briefcase },
+      { title: "FAQs", href: "/dashboard/faqs", icon: HelpCircle },
     ],
   },
   {

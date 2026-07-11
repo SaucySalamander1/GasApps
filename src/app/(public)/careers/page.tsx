@@ -2,9 +2,15 @@
 import { PageHeader } from '@/components/sections/PageHeader';
 import { Container } from '@/components/layout/Container';
 import { CareersApplyForm } from '@/components/sections/CareersApplyForm';
-import { jobs } from '@/data/jobs';
+import { prisma } from '@/lib/prisma';
 
-export default function CareersPage() {
+// Jobs are managed live from the admin panel, so this page always reads the
+// current DB state rather than a build-time snapshot.
+export const dynamic = 'force-dynamic';
+
+export default async function CareersPage() {
+  const jobs = await prisma.job.findMany({ orderBy: { createdAt: 'desc' } });
+
   return (
     <>
       <PageHeader
