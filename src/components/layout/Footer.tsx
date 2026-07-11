@@ -16,6 +16,7 @@ const resourceLinks = [
   { label: 'Downloads', href: '/downloads' },
   { label: 'Resources', href: '/resources' },
   { label: 'Certifications', href: '/certifications' },
+  { label: 'Testimonials', href: '/testimonials' },
   { label: 'FAQ', href: '/faq' },
   { label: 'Contact', href: '/contact' },
 ];

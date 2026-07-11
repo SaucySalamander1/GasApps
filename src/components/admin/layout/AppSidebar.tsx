@@ -16,6 +16,7 @@ import {
   Settings,
   Mail,
   Bot,
+  MessageSquareQuote,
   LucideIcon,
 } from "lucide-react";
 
@@ -43,6 +44,7 @@ const navigation: NavGroup[] = [
     title: "Content",
     items: [
       { title: "Inquiries", href: "/inquiries", icon: Mail },
+      { title: "Testimonials", href: "/dashboard/testimonials", icon: MessageSquareQuote },
       { title: "Products", href: "/dashboard/products", icon: Package },
       { title: "Services", href: "/dashboard/services", icon: Wrench },
       { title: "Industries", href: "/dashboard/industries", icon: Factory },

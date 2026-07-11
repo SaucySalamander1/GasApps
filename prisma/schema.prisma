@@ -177,6 +177,24 @@ enum RequestStatus {
   RESOLVED
 }
 
+enum TestimonialStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Testimonial {
+  id        String            @id @default(cuid())
+  name      String
+  role      String
+  company   String?
+  quote     String
+  rating    Int               @default(5)
+  status    TestimonialStatus @default(PENDING)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+}
+
 model QuoteRequest {
   id               String        @id @default(cuid())
   name             String
