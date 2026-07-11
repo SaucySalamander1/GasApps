@@ -80,10 +80,11 @@ export async function PATCH(
     const downloads = Array.isArray(body.downloads)
       ? body.downloads
           .filter((d: unknown) => isNonEmptyString((d as { label?: unknown })?.label))
-          .map((d: { label: string; fileType: string; fileSize: string }) => ({
+          .map((d: { label: string; fileType: string; fileSize: string; fileUrl?: string }) => ({
             label: d.label,
             fileType: d.fileType ?? '',
             fileSize: d.fileSize ?? '',
+            fileUrl: isNonEmptyString(d.fileUrl) ? d.fileUrl.trim() : null,
           }))
       : [];
 

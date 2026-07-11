@@ -19,7 +19,7 @@ export interface ProductFormValues {
   certificationCodes: string[];
   features: string[];
   specifications: { label: string; value: string }[];
-  downloads: { label: string; fileType: string; fileSize: string }[];
+  downloads: { label: string; fileType: string; fileSize: string; fileUrl: string }[];
 }
 
 const EMPTY_FORM: ProductFormValues = {
@@ -89,6 +89,7 @@ export default function ProductFormModal({
           label: d.label,
           fileType: d.fileType,
           fileSize: d.fileSize,
+          fileUrl: d.fileUrl ?? '',
         })),
       });
       setImagesInput(initialProduct.images.join(', '));
@@ -113,7 +114,7 @@ export default function ProductFormModal({
     });
   }
 
-  function updateDownload(index: number, key: 'label' | 'fileType' | 'fileSize', value: string) {
+  function updateDownload(index: number, key: 'label' | 'fileType' | 'fileSize' | 'fileUrl', value: string) {
     setForm((prev) => {
       const next = [...prev.downloads];
       next[index] = { ...next[index], [key]: value };
@@ -308,7 +309,7 @@ export default function ProductFormModal({
               onClick={() =>
                 setForm((prev) => ({
                   ...prev,
-                  downloads: [...prev.downloads, { label: '', fileType: '', fileSize: '' }],
+                  downloads: [...prev.downloads, { label: '', fileType: '', fileSize: '', fileUrl: '' }],
                 }))
               }
             >
@@ -318,37 +319,44 @@ export default function ProductFormModal({
           </div>
           <div className="flex flex-col gap-2">
             {form.downloads.map((dl, i) => (
-              <div key={i} className="flex gap-2">
+              <div key={i} className="border-border flex flex-col gap-2 rounded-md border p-2">
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Label (e.g. Datasheet)"
+                    value={dl.label}
+                    onChange={(e) => updateDownload(i, 'label', e.target.value)}
+                  />
+                  <Input
+                    placeholder="Type (e.g. PDF)"
+                    value={dl.fileType}
+                    onChange={(e) => updateDownload(i, 'fileType', e.target.value)}
+                    className="max-w-24"
+                  />
+                  <Input
+                    placeholder="Size (e.g. 1.2 MB)"
+                    value={dl.fileSize}
+                    onChange={(e) => updateDownload(i, 'fileSize', e.target.value)}
+                    className="max-w-28"
+                  />
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() =>
+                      setForm((prev) => ({
+                        ...prev,
+                        downloads: prev.downloads.filter((_, idx) => idx !== i),
+                      }))
+                    }
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
                 <Input
-                  placeholder="Label (e.g. Datasheet)"
-                  value={dl.label}
-                  onChange={(e) => updateDownload(i, 'label', e.target.value)}
+                  placeholder="File URL (optional — leave blank to disable the link)"
+                  value={dl.fileUrl}
+                  onChange={(e) => updateDownload(i, 'fileUrl', e.target.value)}
                 />
-                <Input
-                  placeholder="Type (e.g. PDF)"
-                  value={dl.fileType}
-                  onChange={(e) => updateDownload(i, 'fileType', e.target.value)}
-                  className="max-w-24"
-                />
-                <Input
-                  placeholder="Size (e.g. 1.2 MB)"
-                  value={dl.fileSize}
-                  onChange={(e) => updateDownload(i, 'fileSize', e.target.value)}
-                  className="max-w-28"
-                />
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  onClick={() =>
-                    setForm((prev) => ({
-                      ...prev,
-                      downloads: prev.downloads.filter((_, idx) => idx !== i),
-                    }))
-                  }
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </Button>
               </div>
             ))}
           </div>

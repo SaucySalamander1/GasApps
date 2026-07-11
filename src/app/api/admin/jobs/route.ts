@@ -10,9 +10,9 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const resources = await prisma.resource.findMany({ orderBy: { name: 'asc' } });
+  const jobs = await prisma.job.findMany({ orderBy: { createdAt: 'desc' } });
 
-  return NextResponse.json({ resources });
+  return NextResponse.json({ jobs });
 }
 
 export async function POST(request: NextRequest) {
@@ -23,46 +23,45 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { name, category, fileType, fileSize } = body;
+    const { title, department, location, type } = body;
 
     if (
-      !isNonEmptyString(name) ||
-      !isNonEmptyString(category) ||
-      !isNonEmptyString(fileType) ||
-      !isNonEmptyString(fileSize)
+      !isNonEmptyString(title) ||
+      !isNonEmptyString(department) ||
+      !isNonEmptyString(location) ||
+      !isNonEmptyString(type)
     ) {
       return NextResponse.json(
-        { error: 'Name, category, file type, and file size are required.' },
+        { error: 'Title, department, location, and type are required.' },
         { status: 400 }
       );
     }
 
-    const baseSlug = slugify(name);
+    const baseSlug = slugify(title);
     if (!baseSlug) {
-      return NextResponse.json({ error: 'Name must contain letters or numbers.' }, { status: 400 });
+      return NextResponse.json({ error: 'Title must contain letters or numbers.' }, { status: 400 });
     }
 
     let slug = baseSlug;
     let suffix = 1;
-    while (await prisma.resource.findUnique({ where: { slug } })) {
+    while (await prisma.job.findUnique({ where: { slug } })) {
       suffix += 1;
       slug = `${baseSlug}-${suffix}`;
     }
 
-    const resource = await prisma.resource.create({
+    const job = await prisma.job.create({
       data: {
         slug,
-        name: name.trim(),
-        category: category.trim(),
-        fileType: fileType.trim(),
-        fileSize: fileSize.trim(),
-        fileUrl: typeof body.fileUrl === 'string' && body.fileUrl.trim() ? body.fileUrl.trim() : null,
+        title: title.trim(),
+        department: department.trim(),
+        location: location.trim(),
+        type: type.trim(),
       },
     });
 
-    return NextResponse.json({ resource }, { status: 201 });
+    return NextResponse.json({ job }, { status: 201 });
   } catch (error) {
-    console.error('Create resource error:', error);
+    console.error('Create job error:', error);
     return NextResponse.json({ error: 'Something went wrong. Please try again.' }, { status: 500 });
   }
 }

@@ -15,6 +15,7 @@ export interface AdminResource {
   category: string;
   fileType: string;
   fileSize: string;
+  fileUrl: string | null;
   updatedAt: string;
 }
 

@@ -21,7 +21,7 @@ export interface AdminProduct {
   certificationCodes: string[];
   features: string[];
   specifications: { id: string; label: string; value: string }[];
-  downloads: { id: string; label: string; fileType: string; fileSize: string }[];
+  downloads: { id: string; label: string; fileType: string; fileSize: string; fileUrl: string | null }[];
   updatedAt: string;
 }
 

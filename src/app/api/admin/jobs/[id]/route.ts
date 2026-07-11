@@ -14,13 +14,13 @@ export async function GET(
   }
 
   const { id } = await params;
-  const resource = await prisma.resource.findUnique({ where: { id } });
+  const job = await prisma.job.findUnique({ where: { id } });
 
-  if (!resource) {
-    return NextResponse.json({ error: 'Resource not found.' }, { status: 404 });
+  if (!job) {
+    return NextResponse.json({ error: 'Job not found.' }, { status: 404 });
   }
 
-  return NextResponse.json({ resource });
+  return NextResponse.json({ job });
 }
 
 export async function PATCH(
@@ -35,54 +35,53 @@ export async function PATCH(
   const { id } = await params;
 
   try {
-    const existing = await prisma.resource.findUnique({ where: { id } });
+    const existing = await prisma.job.findUnique({ where: { id } });
     if (!existing) {
-      return NextResponse.json({ error: 'Resource not found.' }, { status: 404 });
+      return NextResponse.json({ error: 'Job not found.' }, { status: 404 });
     }
 
     const body = await request.json();
-    const { name, category, fileType, fileSize } = body;
+    const { title, department, location, type } = body;
 
     if (
-      !isNonEmptyString(name) ||
-      !isNonEmptyString(category) ||
-      !isNonEmptyString(fileType) ||
-      !isNonEmptyString(fileSize)
+      !isNonEmptyString(title) ||
+      !isNonEmptyString(department) ||
+      !isNonEmptyString(location) ||
+      !isNonEmptyString(type)
     ) {
       return NextResponse.json(
-        { error: 'Name, category, file type, and file size are required.' },
+        { error: 'Title, department, location, and type are required.' },
         { status: 400 }
       );
     }
 
-    // Only regenerate the slug if the name actually changed, so existing
-    // links to this resource don't silently break.
+    // Only regenerate the slug if the title actually changed, so existing
+    // links to this posting don't silently break.
     let slug = existing.slug;
-    if (name.trim() !== existing.name) {
-      const baseSlug = slugify(name);
+    if (title.trim() !== existing.title) {
+      const baseSlug = slugify(title);
       slug = baseSlug;
       let suffix = 1;
-      while (await prisma.resource.findFirst({ where: { slug, NOT: { id } } })) {
+      while (await prisma.job.findFirst({ where: { slug, NOT: { id } } })) {
         suffix += 1;
         slug = `${baseSlug}-${suffix}`;
       }
     }
 
-    const resource = await prisma.resource.update({
+    const job = await prisma.job.update({
       where: { id },
       data: {
         slug,
-        name: name.trim(),
-        category: category.trim(),
-        fileType: fileType.trim(),
-        fileSize: fileSize.trim(),
-        fileUrl: typeof body.fileUrl === 'string' && body.fileUrl.trim() ? body.fileUrl.trim() : null,
+        title: title.trim(),
+        department: department.trim(),
+        location: location.trim(),
+        type: type.trim(),
       },
     });
 
-    return NextResponse.json({ resource });
+    return NextResponse.json({ job });
   } catch (error) {
-    console.error('Update resource error:', error);
+    console.error('Update job error:', error);
     return NextResponse.json({ error: 'Something went wrong. Please try again.' }, { status: 500 });
   }
 }
@@ -99,10 +98,10 @@ export async function DELETE(
   const { id } = await params;
 
   try {
-    await prisma.resource.delete({ where: { id } });
+    await prisma.job.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Delete resource error:', error);
-    return NextResponse.json({ error: 'Could not delete this resource.' }, { status: 500 });
+    console.error('Delete job error:', error);
+    return NextResponse.json({ error: 'Could not delete this job posting.' }, { status: 500 });
   }
 }

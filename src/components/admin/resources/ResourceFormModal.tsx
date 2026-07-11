@@ -22,6 +22,7 @@ export interface ResourceFormValues {
   category: string;
   fileType: string;
   fileSize: string;
+  fileUrl: string;
 }
 
 const EMPTY_FORM: ResourceFormValues = {
@@ -29,6 +30,7 @@ const EMPTY_FORM: ResourceFormValues = {
   category: CATEGORIES[0],
   fileType: '',
   fileSize: '',
+  fileUrl: '',
 };
 
 interface ResourceFormModalProps {
@@ -59,6 +61,7 @@ export default function ResourceFormModal({
         category: initialResource.category,
         fileType: initialResource.fileType,
         fileSize: initialResource.fileSize,
+        fileUrl: initialResource.fileUrl ?? '',
       });
     } else {
       setForm(EMPTY_FORM);
@@ -140,6 +143,17 @@ export default function ResourceFormModal({
               required
             />
           </div>
+        </div>
+
+        <div>
+          <label className="text-text-primary mb-1.5 block text-sm font-medium">
+            File URL <span className="text-text-secondary">(optional &mdash; leave blank to show &ldquo;Coming soon&rdquo;)</span>
+          </label>
+          <Input
+            value={form.fileUrl}
+            onChange={(e) => setForm((prev) => ({ ...prev, fileUrl: e.target.value }))}
+            placeholder="https://.../catalogue.pdf"
+          />
         </div>
 
         {error && <p className="text-sm text-red-500">{error}</p>}
